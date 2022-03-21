@@ -17,8 +17,10 @@ def background(f):
 @background
 def image_process(patch):
     patch.update(pp(patch.get_img(), patch.get_rms()))
-    patch.update_seg(sg(patch.get_data(), 
-                     start_id=np.square(patch.x_end - patch.x_start) * patch.idx))
+    seg, info = sg(patch.get_data(), patch.get_img(), patch.get_rms(), 
+                   start_id=np.square(patch.x_end - patch.x_start) * patch.idx)
+    patch.update_seg(seg)
+    patch.update_info(info)
     
 
 class Patch:
@@ -44,6 +46,7 @@ class Patch:
         self.rms = rms
         self.data = None
         self.seg = None
+        self.info = None
         
 
     def update(self, data):
@@ -51,6 +54,9 @@ class Patch:
 
     def update_seg(self, seg):
         self.seg = seg
+    
+    def update_info(self, info):
+        self.info = info
 
     def get_coordinates(self):
         return self.x_start, self.x_end, self.y_start, self.y_end
@@ -66,6 +72,9 @@ class Patch:
 
     def get_seg(self):
         return self.seg
+
+    def get_info(self):
+        return self.info
 
 
 class DataManager:
