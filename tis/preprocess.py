@@ -72,6 +72,7 @@ def find_sigma(img, rms, t=2, d=5, sigma_start=1.25, sigma_eps=0.1, patience=0):
     
     return sigma_star
 
+
 def preprocess(img, rms, sigma=1.25, t=2, d=3):
     #if sigma is None:
     #    sigma = find_sigma(img, rms, t=2, d=3, sigma_start=1.25, sigma_eps=0.1, patience=0)

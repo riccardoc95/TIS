@@ -5,6 +5,7 @@ from skimage.restoration import denoise_tv_bregman
 from skimage.restoration import denoise_wavelet
 import numpy as np
 
+
 def gaussian(img, sigma=2, x_size=None, y_size=None):
     if x_size is None or y_size is None:
         if sigma < 1/4:
@@ -14,16 +15,14 @@ def gaussian(img, sigma=2, x_size=None, y_size=None):
             x_size = int(8*sigma + 1)
             y_size = int(8*sigma + 1)
     
-    #x_size=3
-    #y_size=3
-    
     kernel = Gaussian2DKernel(sigma, x_size=x_size, y_size=y_size)
     kernel.normalize()
     kernel_array = kernel.array
     data = ndimage.convolve(img.astype(float), kernel_array, mode='reflect', cval=0)
     return data
 
-def anisodiff(img, niter = 30, gamma = 0.14, kappa = 15):
+
+def anisodiff(img, niter=30, gamma=0.14, kappa=15):
 
     # initial condition
     data = img
@@ -75,9 +74,11 @@ def anisodiff(img, niter = 30, gamma = 0.14, kappa = 15):
 
         return data
     
+    
 def total_variation(img, weight=120):
     data = denoise_tv_bregman(img.astype(float), weight=weight, max_iter=500, eps=0.0001, isotropic=True)
     return data
+
 
 def wavelet(img, sigma=None):
     data = denoise_wavelet(img, sigma=sigma, wavelet='bior1.3')

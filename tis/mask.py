@@ -15,8 +15,8 @@ def generate_mask(data, thresholds, d=5, distance=False):
         return data2
     
     
+    
 # Segmentation Mask
-##TODO: Sistemare moments!!!!
 def convex_mask(mask):
     return convex_hull_image(mask)
 
@@ -26,9 +26,11 @@ def ellipse(h, k, a, b, phi, x, y):
     yp = -(x-h)*np.sin(phi) + (y-k)*np.cos(phi)
     return (xp/(a+1e-05))**2 + (yp/(b+1e-05))**2 <= 1
   
+    
 def func(theta, x,y, mask):
     (h,k,a,b,phi) = theta
     return (np.logical_xor(ellipse(h,k,a,b,phi,x,y), mask)).sum()
+
 
 def moments(mask, x, y):
     N = float(mask.sum())
@@ -56,17 +58,17 @@ def moments(mask, x, y):
 
     return h0, k0, np.sqrt(asq), np.sqrt(bsq), phi
 
+
 def update_mask(mask, mask0, x, y):
     h0, k0, a0, b0, phi0 = moments(mask, x, y)
     return mask0 * ellipse(h0, k0, a0, b0, phi0, x, y)
  
+    
 def ellipse_mask(mask0, iter=8):
     x, y = np.indices(mask0.shape)
     mask = mask0
     for k in range(iter):
         mask = update_mask(mask, mask0, x, y)
     h0, k0, a0, b0, phi0 = moments(mask, x, y)
-    #theta = (h0, k0, a0, b0, phi0)
-    #hopt, kopt, aopt, bopt, phiopt = fmin(func, theta, args=(x, y, mask), disp=False, maxiter=10)
     hopt, kopt, aopt, bopt, phiopt = h0, k0, a0, b0, phi0
     return ellipse(hopt, kopt, aopt, bopt, phiopt, x, y)

@@ -8,6 +8,7 @@ def persistent_entropy(L):
     HL = - ((L / SL) * np.log(L / SL)).sum()
     return HL
 
+
 def ps_entropy(lifetime):
     idxs_ = np.flip(np.argsort(lifetime))
     L = lifetime
@@ -31,6 +32,7 @@ def ps_entropy(lifetime):
     idxs = np.array(idxs)
     return idxs
 
+
 def gaussian_mixture(lifetime):
     X =np.log(1e-05+lifetime).reshape(-1,1)
     if X.shape[0] < 2:
@@ -40,6 +42,7 @@ def gaussian_mixture(lifetime):
         idxs = np.where(gm.predict(X) == 1)[0]
     return idxs
 
+
 def bayesian_gaussian_mixture(lifetime):
     X =np.log(1e-05+lifetime).reshape(-1,1)
     if X.shape[0] < 2:
@@ -48,6 +51,7 @@ def bayesian_gaussian_mixture(lifetime):
         gm = BayesianGaussianMixture(n_components=2, random_state=0).fit(X)
         idxs = np.where(gm.predict(X) == 1)[0]
     return idxs
+
 
 def kmeans(lifetime):
     X =np.log(1e-05+lifetime).reshape(-1,1)
@@ -73,6 +77,7 @@ def mean_shift(lifetime):
         idxs = np.where(clustering.labels_ != c)[0]
     return idxs
 
+
 def spectral(lifetime):
     X =np.log(1e-05+lifetime).reshape(-1,1)
     if X.shape[0] < 2:
@@ -83,6 +88,7 @@ def spectral(lifetime):
         c = np.where(m == m.min())[0]
         idxs = np.where(clustering.labels_ != c)[0]
     return idxs
+
 
 def agglomerative(lifetime):
     X =np.log(1e-05+lifetime).reshape(-1,1)
