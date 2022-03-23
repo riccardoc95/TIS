@@ -1,4 +1,3 @@
-##TODO: ricontrollare unpatch, indici!!!
 import numpy as np
 import pandas as pd
 import asyncio
@@ -20,7 +19,7 @@ def image_process(patch):
     seg, info = sg(patch.get_data(), patch.get_img(), patch.get_rms(), 
                    start_id=np.square(patch.x_end - patch.x_start) * patch.idx)
     patch.update_seg(seg)
-    patch.update_info(info)
+    patch.update_info(pd.DataFrame(info))
     
 
 class Patch:
@@ -87,13 +86,16 @@ class DataManager:
         # data
         self.data = []
         self.segment = None
+        self.info = None
         
     def get_data(self):
         return self.data
     
     def get_seg(self):
         return self.segment
-
+    
+    def get_info(self):
+        return self.info
 
     def patch(self, img, rms):
         n, m = img.shape
@@ -128,9 +130,21 @@ class DataManager:
     def process(self):
         for x in self.data:
             image_process(x)
+    
+    def _fix_info_position(self, patch):
+        info_patch = patch.get_info()
+        x_start, x_end, y_start, y_end = patch.get_coordinates()
+        info_patch['x'] = info_patch['x'] + x_start
+        info_patch['y'] = info_patch['y'] + y_start
+        info_patch['x_min'] = info_patch['x_min'] + x_start
+        info_patch['y_min'] = info_patch['y_min'] + y_start
+        info_patch['x_max'] = info_patch['x_max'] + x_start
+        info_patch['y_max'] = info_patch['y_max'] + y_start
+        return info_patch
         
     def unpatch(self):
         self.segment = np.zeros((self.x_dim, self.y_dim))
+        self.info = pd.DataFrame([])
         
         count = 1
         mapping = {}
@@ -141,16 +155,32 @@ class DataManager:
              
             if self.segment[x_s:x_e, y_s:y_e].sum() == 0:
                 self.segment[x_s:x_e, y_s:y_e] = patch.get_seg()
+                
+                info_patch = self._fix_info_position(patch)
+                self.info = pd.concat([self.info, info_patch])
+                
             else:
                 seg_patch = patch.get_seg()
                 res_patch = self.segment[x_s:x_e, y_s:y_e]
                 
                 idxs = np.unique(res_patch[seg_patch > 0])
                 idxs = np.setdiff1d(idxs,np.array([0]))
+                
+                info_patch = self._fix_info_position(patch)
+                info_patch.set_index('id', inplace=True)
+                img = patch.get_img()
+                rms = patch.get_rms()
 
                 for idx in idxs:
                     unique = np.unique(seg_patch[res_patch == idx])
                     val = unique[0] if unique[0] != 0 else unique[1]
+                    
+                    # Info
+                    w = np.where((seg_patch == val) & (res_patch == idx))
+                    info_patch.loc[int(val),'area'] = info_patch.loc[int(val),'area'] - len(w[0])
+                    info_patch.loc[int(val),'flusso'] = info_patch.loc[int(val),'flusso'] - img[w].sum()
+                    info_patch.loc[int(val),'errore'] = info_patch.loc[int(val),'errore'] - (rms[w]**2).sum()
+
                     if idx not in mapping.keys():
                         mapping[int(idx)] = int(count)
                         mapping[int(val)] = int(count)
@@ -160,6 +190,9 @@ class DataManager:
                 
                 w = np.where(self.segment[x_s:x_e, y_s:y_e] == 0)
                 self.segment[x_s:x_e, y_s:y_e][w] = patch.get_seg()[w]
+
+                info_patch.reset_index(inplace=True)
+                self.info = pd.concat([self.info, info_patch])
         
         idxs = np.unique(self.segment)
         idxs = np.setdiff1d(idxs,np.array([0]))
@@ -167,14 +200,34 @@ class DataManager:
             if idx not in mapping.keys():
                 mapping[int(idx)] = int(count)
                 count += 1
-
         
+
+        # segmentation
         k = np.array(list(mapping.keys()))
         v = np.array(list(mapping.values()))
-        mapping_ar = np.zeros(k.max()+1,dtype=v.dtype) #k,v from approach #1
+        mapping_ar = np.zeros(k.max()+1,dtype=v.dtype) 
         mapping_ar[k] = v
         self.segment = mapping_ar[self.segment.astype(int)]
+        self.segment = self.segment[self.x_pad[0]:-self.x_pad[1], 
+                                    self.y_pad[0]:-self.y_pad[1]]
+        
+        # info
+        self.info = self.info.replace({"id": mapping})
+        
+        self.info = self.info.groupby(['id']).agg({'x':lambda x: x.mean() - self.x_pad[0],
+                                                   'y':lambda x: x.mean() - self.y_pad[0],
+                                                   'x_min':lambda x: x.min() - self.x_pad[0],
+                                                   'y_min':lambda x: x.min() - self.y_pad[0],
+                                                   'x_max':lambda x: x.max() - self.x_pad[0],
+                                                   'y_max':lambda x: x.max() - self.y_pad[0], 
+                                                   'area':'sum',
+                                                   'flusso':'sum',
+                                                   'errore':'sum',}) 
+        self.info = self.info.reset_index()
+        
+        self.info[['id', 'x', 'y', 'x_min', 'y_min', 'x_max', 'y_max']] = \
+        self.info[['id', 'x', 'y', 'x_min', 'y_min', 'x_max', 'y_max']].astype(int)
+        self.info[['area', 'flusso', 'errore']] = \
+        self.info[['area', 'flusso', 'errore']].astype(float)
 
-        return self.segment[self.x_pad[0]:-self.x_pad[1], 
-                            self.y_pad[0]:-self.y_pad[1]]
-
+       
