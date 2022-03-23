@@ -1,3 +1,5 @@
+## TODO: mapping non contiene tutti i valori idx in info?!? Meno oggetti sulla segmentation?!?
+##       Dalla funzione segmentation ritornano lo stesso numero di oggetto -> il problema è nell'unione
 import numpy as np
 import pandas as pd
 import asyncio
@@ -193,14 +195,14 @@ class DataManager:
 
                 info_patch.reset_index(inplace=True)
                 self.info = pd.concat([self.info, info_patch])
-        
-        idxs = np.unique(self.segment)
-        idxs = np.setdiff1d(idxs,np.array([0]))
+            
+        #idxs = np.unique(self.segment)
+        #idxs = np.setdiff1d(idxs,np.array([0]))
+        idxs = self.info['id']
         for idx in tqdm(idxs):
             if idx not in mapping.keys():
                 mapping[int(idx)] = int(count)
                 count += 1
-        
 
         # segmentation
         k = np.array(list(mapping.keys()))
@@ -211,9 +213,9 @@ class DataManager:
         self.segment = self.segment[self.x_pad[0]:-self.x_pad[1], 
                                     self.y_pad[0]:-self.y_pad[1]]
         
-        # info
-        self.info = self.info.replace({"id": mapping})
-        
+        # info    
+        self.info['id'].replace(mapping, inplace=True)
+
         self.info = self.info.groupby(['id']).agg({'x':lambda x: x.mean() - self.x_pad[0],
                                                    'y':lambda x: x.mean() - self.y_pad[0],
                                                    'x_min':lambda x: x.min() - self.x_pad[0],
@@ -229,5 +231,6 @@ class DataManager:
         self.info[['id', 'x', 'y', 'x_min', 'y_min', 'x_max', 'y_max']].astype(int)
         self.info[['area', 'flusso', 'errore']] = \
         self.info[['area', 'flusso', 'errore']].astype(float)
-
+        
+        
        
