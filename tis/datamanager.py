@@ -1,5 +1,4 @@
-## TODO: mapping non contiene tutti i valori idx in info?!? Meno oggetti sulla segmentation?!?
-##       Dalla funzione segmentation ritornano lo stesso numero di oggetto -> il problema è nell'unione
+## TODO: controllare oggetti: la sovrapposizione elimina qualcosa?!?
 import numpy as np
 import pandas as pd
 import asyncio
@@ -190,15 +189,15 @@ class DataManager:
                     else:
                         mapping[int(val)] = mapping[int(idx)]
                 
-                w = np.where(self.segment[x_s:x_e, y_s:y_e] == 0)
+                #w = np.where(self.segment[x_s:x_e, y_s:y_e] == 0)
+                w = np.where(patch.get_seg() != 0)
                 self.segment[x_s:x_e, y_s:y_e][w] = patch.get_seg()[w]
 
                 info_patch.reset_index(inplace=True)
                 self.info = pd.concat([self.info, info_patch])
             
-        #idxs = np.unique(self.segment)
-        #idxs = np.setdiff1d(idxs,np.array([0]))
-        idxs = self.info['id']
+        idxs = np.unique(self.segment)
+        idxs = np.setdiff1d(idxs,np.array([0]))
         for idx in tqdm(idxs):
             if idx not in mapping.keys():
                 mapping[int(idx)] = int(count)
@@ -214,8 +213,9 @@ class DataManager:
                                     self.y_pad[0]:-self.y_pad[1]]
         
         # info    
+        self.info = self.info[self.info['id'].isin(idxs)]
         self.info['id'].replace(mapping, inplace=True)
-
+        
         self.info = self.info.groupby(['id']).agg({'x':lambda x: x.mean() - self.x_pad[0],
                                                    'y':lambda x: x.mean() - self.y_pad[0],
                                                    'x_min':lambda x: x.min() - self.x_pad[0],
