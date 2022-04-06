@@ -1,20 +1,17 @@
-## TODO: controllare oggetti: la sovrapposizione elimina qualcosa?!?
 import numpy as np
 import pandas as pd
-import asyncio
+import time
 
 from preprocess import preprocess as pp
 from segmentation import segmentation as sg
 
-from tqdm import tqdm
+import asyncio
+import nest_asyncio
 
-def background(f):
-    def wrapped(*args, **kwargs):
-        return asyncio.get_event_loop().run_in_executor(None, f, *args, **kwargs)
+nest_asyncio.apply()
 
-    return wrapped
 
-@background
+@asyncio.coroutine
 def image_process(patch):
     patch.update(pp(patch.get_img(), patch.get_rms()))
     seg, info = sg(patch.get_data(), patch.get_img(), patch.get_rms(), 
@@ -129,8 +126,10 @@ class DataManager:
                 count += 1
             
     def process(self):
-        for x in self.data:
-            image_process(x)
+        loop = asyncio.get_event_loop()
+        tasks = [image_process(x) for x in self.data]
+        loop.run_until_complete(asyncio.wait(tasks))
+
     
     def _fix_info_position(self, patch):
         info_patch = patch.get_info()
@@ -147,75 +146,46 @@ class DataManager:
         self.segment = np.zeros((self.x_dim, self.y_dim))
         self.info = pd.DataFrame([])
         
-        count = 1
-        mapping = {}
-        mapping[0] = 0
-        
-        for patch in tqdm(self.data):
+        n_elem = 1
+        for patch in self.data:
             x_s, x_e, y_s, y_e = patch.get_coordinates()
-             
-            if self.segment[x_s:x_e, y_s:y_e].sum() == 0:
-                self.segment[x_s:x_e, y_s:y_e] = patch.get_seg()
-                
-                info_patch = self._fix_info_position(patch)
-                self.info = pd.concat([self.info, info_patch])
-                
-            else:
-                seg_patch = patch.get_seg()
-                res_patch = self.segment[x_s:x_e, y_s:y_e]
-                
-                idxs = np.unique(res_patch[seg_patch > 0])
-                idxs = np.setdiff1d(idxs,np.array([0]))
-                
-                info_patch = self._fix_info_position(patch)
-                info_patch.set_index('id', inplace=True)
-                img = patch.get_img()
-                rms = patch.get_rms()
-
-                for idx in idxs:
-                    unique = np.unique(seg_patch[res_patch == idx])
-                    val = unique[0] if unique[0] != 0 else unique[1]
-                    
-                    # Info
-                    w = np.where((seg_patch == val) & (res_patch == idx))
-                    info_patch.loc[int(val),'area'] = info_patch.loc[int(val),'area'] - len(w[0])
-                    info_patch.loc[int(val),'flusso'] = info_patch.loc[int(val),'flusso'] - img[w].sum()
-                    info_patch.loc[int(val),'errore'] = info_patch.loc[int(val),'errore'] - (rms[w]**2).sum()
-
-                    if idx not in mapping.keys():
-                        mapping[int(idx)] = int(count)
-                        mapping[int(val)] = int(count)
-                        count += 1
-                    else:
-                        mapping[int(val)] = mapping[int(idx)]
-                
-                #w = np.where(self.segment[x_s:x_e, y_s:y_e] == 0)
-                w = np.where(patch.get_seg() != 0)
-                self.segment[x_s:x_e, y_s:y_e][w] = patch.get_seg()[w]
-
-                info_patch.reset_index(inplace=True)
-                self.info = pd.concat([self.info, info_patch])
             
-        idxs = np.unique(self.segment)
-        idxs = np.setdiff1d(idxs,np.array([0]))
-        for idx in tqdm(idxs):
-            if idx not in mapping.keys():
-                mapping[int(idx)] = int(count)
-                count += 1
-
+            seg_patch = patch.get_seg()
+            res_patch = self.segment[x_s:x_e, y_s:y_e]
+            info_patch = self._fix_info_position(patch)
+            img = patch.get_img()
+            rms = patch.get_rms()
+            
+            for idx in info_patch['id']:
+                # intersezioni
+                vals, counts = np.unique(res_patch[seg_patch == idx], return_counts=True)
+                vals = vals[np.argsort(-counts)]
+                vals = np.setdiff1d(vals, np.array([0]))
+                
+                if len(vals) == 0:
+                    self.segment[x_s:x_e, y_s:y_e][seg_patch == idx] = n_elem
+                    info = info_patch[info_patch['id'] == idx]
+                    info['id'] = n_elem
+                    self.info = pd.concat([self.info, info])
+                    n_elem +=1
+                else:
+                    info = info_patch[info_patch['id'] == idx]
+                    info['id'] =  vals[0]
+                    for v in vals:
+                        w = np.where((res_patch == v) & (seg_patch == idx))
+                        seg_patch[w] = 0
+                        info['area'] = info['area'] - len(w[0])
+                        info['flusso'] = info['flusso'] - img[w].sum()
+                        info['errore'] = info['errore'] - (rms[w]**2).sum()
+                    
+                    self.segment[x_s:x_e, y_s:y_e][seg_patch == idx] = vals[0]
+                    self.info = pd.concat([self.info, info])
+                    
+                
         # segmentation
-        k = np.array(list(mapping.keys()))
-        v = np.array(list(mapping.values()))
-        mapping_ar = np.zeros(k.max()+1,dtype=v.dtype) 
-        mapping_ar[k] = v
-        self.segment = mapping_ar[self.segment.astype(int)]
         self.segment = self.segment[self.x_pad[0]:-self.x_pad[1], 
                                     self.y_pad[0]:-self.y_pad[1]]
-        
         # info    
-        self.info = self.info[self.info['id'].isin(idxs)]
-        self.info['id'].replace(mapping, inplace=True)
-        
         self.info = self.info.groupby(['id']).agg({'x':lambda x: x.mean() - self.x_pad[0],
                                                    'y':lambda x: x.mean() - self.y_pad[0],
                                                    'x_min':lambda x: x.min() - self.x_pad[0],
@@ -231,6 +201,4 @@ class DataManager:
         self.info[['id', 'x', 'y', 'x_min', 'y_min', 'x_max', 'y_max']].astype(int)
         self.info[['area', 'flusso', 'errore']] = \
         self.info[['area', 'flusso', 'errore']].astype(float)
-        
-        
        

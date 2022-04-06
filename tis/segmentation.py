@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import ndimage
+
 from filters import kmeans
 from persistent_diagrams import persistent_diagrams
 from mask import generate_mask, convex_mask, ellipse_mask

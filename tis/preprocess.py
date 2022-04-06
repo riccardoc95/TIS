@@ -1,4 +1,5 @@
 import numpy as np
+
 from denoise import gaussian, anisodiff, total_variation
 from thresholds import thresholds
 from persistent_diagrams import persistent_diagrams
@@ -73,9 +74,9 @@ def find_sigma(img, rms, t=2, d=5, sigma_start=1.25, sigma_eps=0.1, patience=0):
     return sigma_star
 
 
-def preprocess(img, rms, sigma=1.25, t=2, d=3):
-    #if sigma is None:
-    #    sigma = find_sigma(img, rms, t=2, d=3, sigma_start=1.25, sigma_eps=0.1, patience=0)
+def preprocess(img, rms, sigma=1.25, t=2, d=5):
+    if sigma is None:
+        sigma = find_sigma(img, rms, t=t, d=d, sigma_start=1.25, sigma_eps=0.1, patience=0)
     data = gaussian(img, sigma=sigma)
     thrs = thresholds(img, rms, t=t)
     mask = generate_mask(data, thrs, d=d, distance=False)
