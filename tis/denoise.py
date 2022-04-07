@@ -1,4 +1,3 @@
-import pandas as pd
 from astropy.convolution import Gaussian2DKernel
 from scipy import ndimage
 from skimage.restoration import denoise_tv_bregman

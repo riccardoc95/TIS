@@ -3,8 +3,8 @@ import os
 
 # TODO: Aggiungere controllo input da tis.conf
 
-# TODO: aggiungere i tipi di filtro (kmeans (default), ps entropy.... con i relativi parametri
-#       aggiungere i tipi di denoising (gaussian (default), anisodiff... con i relativi parametri
+# TODO: aggiungere i tipi di filtro già implementati (kmeans (default), ps entropy.... con i relativi parametri
+#       aggiungere i tipi di denoising già implementati (gaussian (default), anisodiff... con i relativi parametri
 
 # DEFAULT PARAMETERS
 parameters = {# Input Parameters
