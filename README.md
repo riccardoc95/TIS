@@ -10,25 +10,21 @@ TIS is free software: you can redistribute it and / or modify it under the terms
 
 ## Installation
 
-PROBLEMA!
-
+1) Clone this repository:
 ```bash
-pip install foobar
+git clone https://github.com/riccardoc95/TIS.git
+```
+2) Install dependencies:
+```bash
+pip install -r requirements.txt
 ```
 
 ## How to use
+1) Set the parameters in `tis.conf`
+2) Run:
 
 ```python
-import foobar
-
-# returns 'words'
-foobar.pluralize('word')
-
-# returns 'geese'
-foobar.pluralize('goose')
-
-# returns 'phenomenon'
-foobar.singularize('phenomena')
+python tis
 ```
 
 ## Input file format
