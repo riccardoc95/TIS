@@ -15,7 +15,11 @@ def write_fits(obj, path):
     hdu = fits.PrimaryHDU(obj)
     hdu.writeto(path)
 
-    
+
+def write_info(info, path):
+    info.to_csv(path, index=False)
+
+
 def minmaxscaler(x, min_t=0, max_t=1):
     y = x[~np.isnan(x)]
     return (x - y.min())/(y.max()-y.min()) * (max_t - min_t) + min_t

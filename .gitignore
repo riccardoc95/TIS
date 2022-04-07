@@ -134,4 +134,5 @@ tis/main.ipynb
 
 # Data
 data/
+out/
 back_files/*

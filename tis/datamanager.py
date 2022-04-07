@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
-import time
 
 from preprocess import preprocess as pp
 from segmentation import segmentation as sg
+from config import parameters
 
 import asyncio
 import nest_asyncio
@@ -11,10 +11,17 @@ import nest_asyncio
 nest_asyncio.apply()
 
 
-@asyncio.coroutine
-def image_process(patch):
-    patch.update(pp(patch.get_img(), patch.get_rms()))
-    seg, info = sg(patch.get_data(), patch.get_img(), patch.get_rms(), 
+async def image_process(patch):
+    patch.update(pp(patch.get_img(),
+                    patch.get_rms(),
+                    sigma=parameters['SIGMA'],
+                    t=parameters['T'],
+                    d=parameters['D']))
+    seg, info = sg(patch.get_data(),
+                   img=patch.get_img(),
+                   rms=patch.get_rms(),
+                   convex=parameters['CONVEX'],
+                   ellipse=parameters['ELLIPSE'],
                    start_id=np.square(patch.x_end - patch.x_start) * patch.idx)
     patch.update_seg(seg)
     patch.update_info(pd.DataFrame(info))
