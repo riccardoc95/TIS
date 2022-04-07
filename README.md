@@ -14,7 +14,20 @@ TIS is free software: you can redistribute it and / or modify it under the terms
 ```bash
 git clone https://github.com/riccardoc95/TIS.git
 ```
-2) Install dependencies:
+2) Go this repository:
+```bash
+cd TIS
+```
+3) Create new python virtual-env:
+```bash
+python -m venv venv
+```
+4) Activate virtual-env:
+```bash
+source venv/bin/activate
+```
+
+5) Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
