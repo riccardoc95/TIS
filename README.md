@@ -1,5 +1,5 @@
 # Topological Image Segmentation 
-copyright by
+© Copyright by
 
 ## Description
 TIS is a Python library for the segmentation of astronomical images. It uses persistent homology to find and separate objects.
