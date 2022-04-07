@@ -23,7 +23,7 @@ pip install -r requirements.txt
 1) Set the parameters in `tis.conf`
 2) Run:
 
-```python
+```
 python tis
 ```
 
