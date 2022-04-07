@@ -1,1 +1,1 @@
-# Topological Image Segmentation for Astronomical Images
+# Topological Image Segmentation 
