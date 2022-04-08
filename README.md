@@ -14,7 +14,7 @@ TIS is free software: you can redistribute it and / or modify it under the terms
 ```bash
 git clone https://github.com/riccardoc95/TIS.git
 ```
-2) Go this repository:
+2) Go to this repository:
 ```bash
 cd TIS
 ```
