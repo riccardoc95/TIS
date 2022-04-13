@@ -1,6 +1,6 @@
 [![Python 3.8.5](https://img.shields.io/badge/python-3.8.5-blue.svg)](https://www.python.org/downloads/release/python-385/)
 
-<>(![alt text](https://github.com/riccardoc95/TIS/blob/main/logo.png))
+[comment]: # ![alt text](https://github.com/riccardoc95/TIS/blob/main/logo.png)
 
 # Topological Image Segmentation 
 © Copyright by
