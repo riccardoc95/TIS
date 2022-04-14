@@ -4,12 +4,18 @@ from skimage.restoration import denoise_tv_bregman
 from skimage.restoration import denoise_wavelet
 import numpy as np
 
+ALL_DENOISE = {"gaussian": lambda **kwargs: gaussian(**kwargs),
+               "anisodiff": lambda **kwargs: anisodiff(**kwargs),
+               "total_variation": lambda **kwargs: total_variation(**kwargs),
+               "wavelet": lambda **kwargs: wavelet(**kwargs),
+               }
+
 
 def gaussian(img, sigma=2, x_size=None, y_size=None):
     if x_size is None or y_size is None:
         if sigma < 1/4:
-            x_size=3
-            y_size=3
+            x_size = 3
+            y_size = 3
         else:
             x_size = int(8*sigma + 1)
             y_size = int(8*sigma + 1)

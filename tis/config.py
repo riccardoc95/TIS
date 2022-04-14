@@ -1,10 +1,6 @@
 import configparser
 import os
 
-# TODO: Aggiungere controllo input da tis.conf
-
-# TODO: aggiungere i tipi di filtro già implementati (kmeans (default), ps entropy.... con i relativi parametri
-#       aggiungere i tipi di denoising già implementati (gaussian (default), anisodiff... con i relativi parametri
 
 # DEFAULT PARAMETERS
 parameters = {# Input Parameters
@@ -29,6 +25,8 @@ parameters = {# Input Parameters
               "DENOISE_TYPE": "gaussian",
               # -- gaussian paramenters
               "SIGMA": None,
+              "X_SIZE": None,
+              "Y_SIZE": None,
               # -- anisodiff paramenters
               "N_ITER": 30,
               "GAMMA": 0.14,

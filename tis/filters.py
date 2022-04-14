@@ -3,6 +3,16 @@ from sklearn.cluster import MeanShift, estimate_bandwidth, KMeans, SpectralClust
 from sklearn.mixture import GaussianMixture, BayesianGaussianMixture
 
 
+ALL_FILTERS = {"persistent_entropy": lambda x: ps_entropy(x),
+               "gaussian_mixture": lambda x: gaussian_mixture(x),
+               "bayesian_gaussian_mixture": lambda x: bayesian_gaussian_mixture(x),
+               "kmeans": lambda x: kmeans(x),
+               "mean_shift": lambda x: mean_shift(x),
+               "spectral": lambda x: spectral(x),
+               "agglomerative": lambda x: agglomerative(x),
+               }
+
+
 def persistent_entropy(L):
     SL = L.sum()
     HL = - ((L / SL) * np.log(L / SL)).sum()
