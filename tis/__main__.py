@@ -27,8 +27,8 @@ OUT_FOLDER = parameters['OUT_FOLDER']
 OUT_FILE = parameters['OUT_FILE']
 OUT_INFO = parameters['OUT_INFO']
 
-data_folder = os.path.join('.', DATA_FOLDER)
-out_folder = os.path.join('.', OUT_FOLDER)
+data_folder = DATA_FOLDER
+out_folder = OUT_FOLDER
 
 if not os.path.exists(out_folder):
     os.makedirs(out_folder)

@@ -3,7 +3,7 @@ from scipy import ndimage
 
 from filters import kmeans
 from persistent_diagrams import persistent_diagrams
-from mask import generate_mask, convex_mask, ellipse_mask
+from mask import convex_mask, ellipse_mask
 
 
 def segmentation(data, img=None, rms=None, convex=False, ellipse=False, start_id=0):

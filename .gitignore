@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 # Other
+.idea/
 .DS_Store
 tis/main.ipynb
 

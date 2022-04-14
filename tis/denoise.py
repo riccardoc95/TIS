@@ -74,11 +74,11 @@ def anisodiff(img, niter=30, gamma=0.14, kappa=15):
         return data
     
     
-def total_variation(img, weight=120):
-    data = denoise_tv_bregman(img.astype(float), weight=weight, max_iter=500, eps=0.0001, isotropic=True)
+def total_variation(img, weight=120, max_iter=500, eps=0.0001, isotropic=True):
+    data = denoise_tv_bregman(img.astype(float), weight=weight, max_iter=max_iter, eps=eps, isotropic=isotropic)
     return data
 
 
-def wavelet(img, sigma=None):
-    data = denoise_wavelet(img, sigma=sigma, wavelet='bior1.3')
+def wavelet(img, sigma=None, wav='bior1.3'):
+    data = denoise_wavelet(img, sigma=sigma, wavelet=wav)
     return data

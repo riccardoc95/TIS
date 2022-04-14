@@ -8,7 +8,7 @@ import os
 
 # DEFAULT PARAMETERS
 parameters = {# Input Parameters
-              "DATA_FOLDER": "data",
+              "DATA_FOLDER": "./data",
               "IMG_FILE": "img.fits",
               "RMS_FILE": "rms.fits",
               # Output Parameters
@@ -21,9 +21,28 @@ parameters = {# Input Parameters
               # Segmentation Parameters
               "T": 2,
               "D": 3,
-              "SIGMA": None,
               "CONVEX": False,
               "ELLIPSE": False,
+              # - Filter
+              "FILTER_TYPE": "kmeans",
+              # - Denoise
+              "DENOISE_TYPE": "gaussian",
+              # -- gaussian paramenters
+              "SIGMA": None,
+              # -- anisodiff paramenters
+              "N_ITER": 30,
+              "GAMMA": 0.14,
+              "KAPPA": 15,
+              # -- total_variation paramenters
+              "WEIGHT": 120,
+              "MAX_ITER": 500,
+              "EPS": 0.0001,
+              "ISOTROPIC": True,
+              # -- wavelet paramenters
+              "SIGMA_W": None,
+              "WAVELET": "bior1.3",
+              # Other
+
              }
 
 # READ PARAMETERS FROM .CONF FILE
