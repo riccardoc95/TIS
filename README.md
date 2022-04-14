@@ -39,7 +39,7 @@ pip install -r requirements.txt
 2) Run:
 
 ```
-python tis
+python main.py
 ```
 
 ## Input file format

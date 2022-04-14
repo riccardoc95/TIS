@@ -1,6 +1,6 @@
-from utils import open_fits, write_fits, write_info
-from datamanager import DataManager
-from config import parameters
+from tis.utils import open_fits, write_fits, write_info
+from tis.datamanager import DataManager
+from tis.config import parameters
 
 import os
 import sys

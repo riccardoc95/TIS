@@ -1,11 +1,11 @@
 import numpy as np
 
-from denoise import gaussian
-from thresholds import thresholds
-from persistent_diagrams import persistent_diagrams
-from filters import kmeans
-from mask import generate_mask
-from utils import minmaxscaler
+from .denoise import gaussian
+from .thresholds import thresholds
+from .persistent_diagrams import persistent_diagrams
+from .filters import kmeans
+from .mask import generate_mask
+from .utils import minmaxscaler
 
 import gc
 import warnings
