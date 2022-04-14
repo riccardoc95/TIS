@@ -1,17 +1,17 @@
 import numpy as np
 import pandas as pd
 
-from .preprocess import preprocess as pp, find_sigma as fs
-from .segmentation import segmentation as sg
-from .config import parameters
+from preprocess import preprocess as pp, find_sigma as fs
+from segmentation import segmentation as sg
+from config import parameters
 
 import asyncio
 import nest_asyncio
 
 nest_asyncio.apply()
 
-from .filters import ALL_FILTERS
-from .denoise import ALL_DENOISE
+from filters import ALL_FILTERS
+from denoise import ALL_DENOISE
 
 
 lifetime_filter = ALL_FILTERS[parameters["FILTER_TYPE"]]

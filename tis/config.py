@@ -1,6 +1,7 @@
 import configparser
 import os
 
+#cwd = os.getcwd()
 
 # DEFAULT PARAMETERS
 parameters = {# Input Parameters

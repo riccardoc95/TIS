@@ -1,9 +1,9 @@
 import numpy as np
 from scipy import ndimage
 
-from .filters import kmeans
-from .persistent_diagrams import persistent_diagrams
-from .mask import convex_mask, ellipse_mask
+from filters import kmeans
+from persistent_diagrams import persistent_diagrams
+from mask import convex_mask, ellipse_mask
 
 
 def segmentation(data, img=None, rms=None, convex=False, ellipse=False, lifetime_filter=kmeans, start_id=0):
