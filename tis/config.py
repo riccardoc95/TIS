@@ -1,7 +1,6 @@
 import configparser
 import os
 
-#cwd = os.getcwd()
 
 # DEFAULT PARAMETERS
 parameters = {# Input Parameters
@@ -46,7 +45,8 @@ parameters = {# Input Parameters
 
 # READ PARAMETERS FROM .CONF FILE
 parser = configparser.ConfigParser()
-config_file_path = os.path.join("", "tis.conf")
+cwd = os.getcwd()
+config_file_path = os.path.join(cwd, "tis.conf")
 parser.read(config_file_path)
 
 

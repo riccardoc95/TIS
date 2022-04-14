@@ -30,11 +30,17 @@ OUT_INFO = parameters['OUT_INFO']
 data_folder = DATA_FOLDER
 out_folder = OUT_FOLDER
 
-if not os.path.exists(out_folder):
-    os.makedirs(out_folder)
-
-if len(os.listdir(out_folder)) != 0:
-    sys.exit("Error: output folder is not empty.")
+i = 0
+while True:
+    if not os.path.exists(out_folder):
+        os.makedirs(out_folder)
+        break
+    else:
+        if i == 0:
+            out_folder = out_folder + '_0'
+        else:
+            out_folder = out_folder[:-1] + str(i)
+        i += 1
 
 img_path = os.path.join(data_folder, IMG_FILE)
 rms_path = os.path.join(data_folder, RMS_FILE)
