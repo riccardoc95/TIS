@@ -21,15 +21,8 @@ git clone https://github.com/riccardoc95/TIS.git
 ```bash
 cd TIS
 ```
-3) (OPTIONAL) Create new python virtual-env:
-```bash
-python -m venv venv
-```
-```bash
-source venv/bin/activate
-```
 
-4) Install TIS package:
+3) Install TIS package:
 ```bash
 pip install -e .
 ```
