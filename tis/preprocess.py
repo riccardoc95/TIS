@@ -1,11 +1,11 @@
 import numpy as np
 
-from denoise import gaussian
-from thresholds import thresholds
-from persistent_diagrams import persistent_diagrams
-from filters import kmeans
-from mask import generate_mask
-from utils import minmaxscaler
+from .denoise import gaussian
+from .thresholds import thresholds
+from .persistent_diagrams import persistent_diagrams
+from .filters import kmeans
+from .mask import generate_mask
+from .utils import minmaxscaler
 
 import gc
 import warnings
@@ -19,24 +19,24 @@ def find_sigma(img, rms, t=2, d=5, sigma_start=1.25, sigma_eps=0.1, patience=0, 
     sigma_star_next = sigma_star
     sigma_step = sigma_start / 2
     patience = patience
-    
+
     init = True
     while sigma_step >= sigma_eps:
-    
+
         sigmas = np.arange(sigma_start, 0, -sigma_step)
 
         for k, sigma in enumerate(sigmas):
             data = gaussian(img, sigma=sigma)
             thrs = thresholds(img, rms, t=t)
             mask = generate_mask(data, thrs, d=d, distance=False)
-    
+
             im = minmaxscaler(data) * mask
 
             dgm, centers, ends, lifetime = persistent_diagrams(im, plot=False)
 
             idxs = lifetime_filter(lifetime)
             n = idxs.size
-            
+
             if init:
                 n_old = n
                 init = False
@@ -58,7 +58,7 @@ def find_sigma(img, rms, t=2, d=5, sigma_start=1.25, sigma_eps=0.1, patience=0, 
             sigma_start = sigma
         sigma_step = sigma_step/2
         sigma_start = sigma_start - sigma_step
-    
+
     # Clean memory
     del data
     del mask
@@ -69,7 +69,7 @@ def find_sigma(img, rms, t=2, d=5, sigma_start=1.25, sigma_eps=0.1, patience=0, 
     del lifetime
     del idxs
     gc.collect()
-    
+
     return sigma_star
 
 
@@ -77,6 +77,6 @@ def preprocess(img, rms, t=2, d=5, denoiser=lambda x: gaussian(x, sigma=1.25)):
     data = denoiser(img)
     thrs = thresholds(img, rms, t=t)
     mask = generate_mask(data, thrs, d=d, distance=False)
-    
+
     im = minmaxscaler(data) * mask
     return im

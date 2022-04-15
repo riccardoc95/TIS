@@ -1,19 +1,12 @@
-from utils import open_fits, write_fits, write_info
-from datamanager import DataManager
-from config import parameters
+from .utils import open_fits, write_fits, write_info
+from .datamanager import DataManager
+from .config import parameters
 
 import os
 import sys
 import argparse
 import shutil
 
-
-
-print("*********************************************************")
-print("***********************     *     ***********************")
-print("                        *  TIS  *                        ")
-print("***********************   *   *   ***********************")
-print("*********************************************************")
 
 # ARGPARSER
 parser = argparse.ArgumentParser(description='Topological Image Segmentation')
@@ -25,18 +18,18 @@ parser.add_argument('--output', type=str, default=None, help='Output folder')
 args = parser.parse_args()
 
 if args.export_config is not None:
-    src = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'default_tis.conf')
+    src = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'default_tis.py')
     dst = os.path.join(args.export_config, 'tis.conf')
     shutil.copyfile(src, dst)
+    print('Message: tis.conf is created!')
     sys.exit()
 
 
-# print()
-# print("PARAMETERS")
-# print("----------")
-# for key, value in parameters.items():
-#    print(key, '=', value)
-# print()
+print("*********************************************************")
+print("***********************     *     ***********************")
+print("                        *  TIS  *                        ")
+print("***********************   *   *   ***********************")
+print("*********************************************************")
 
 DATA_FOLDER = parameters['DATA_FOLDER']
 IMG_FILE = parameters['IMG_FILE']

@@ -1,17 +1,17 @@
 import numpy as np
 from scipy import ndimage
 
-from filters import kmeans
-from persistent_diagrams import persistent_diagrams
-from mask import convex_mask, ellipse_mask
+from .filters import kmeans
+from .persistent_diagrams import persistent_diagrams
+from .mask import convex_mask, ellipse_mask
 
 
 def segmentation(data, img=None, rms=None, convex=False, ellipse=False, lifetime_filter=kmeans, start_id=0):
     dgm, centers, ends, lifetime = persistent_diagrams(data, plot=False)
-    
+
     idxs = lifetime_filter(lifetime)
     idxs = np.flip(idxs[(np.argsort(dgm[idxs,1]))])
-    
+
     info = {'id': [],
             'x': [],
             'y': [],
@@ -27,7 +27,7 @@ def segmentation(data, img=None, rms=None, convex=False, ellipse=False, lifetime
     i = 1
     for idx in idxs:
         x, y = centers[idx]
-        
+
         # Se il punto è fuori l'immagine, continua
         if (x > data.shape[0] - 1) or (y > data.shape[1] - 1):
             continue
@@ -37,19 +37,19 @@ def segmentation(data, img=None, rms=None, convex=False, ellipse=False, lifetime
         component_at_idx = ndimage.label(data_temp)[0]
 
         del data_temp
-        
+
         component = component_at_idx == component_at_idx[x, y]
-        
+
         # Se l'oggetto non c'è o è grande come tutta l'immagine, continua
         if (component.sum() == 0) or (component.sum() == data.size):
             continue
-        
+
         # Modifica forma della segmentazione
         if ellipse:
             component = ellipse_mask(component)
         elif convex:
             component = convex_mask(component)
-        
+
         # INFO
         info['id'].append(start_id + i)
         info['x'].append(x)
@@ -68,9 +68,9 @@ def segmentation(data, img=None, rms=None, convex=False, ellipse=False, lifetime
             info['errore'].append((rms[component]**2).sum())
         else:
             info['errore'].append(np.nan)
-        
+
         data_components[component] = start_id + i
-        
+
         i += 1
 
     return data_components, info
