@@ -4,6 +4,9 @@ from config import parameters
 
 import os
 import sys
+import argparse
+import shutil
+
 
 
 print("*********************************************************")
@@ -12,18 +15,37 @@ print("                        *  TIS  *                        ")
 print("***********************   *   *   ***********************")
 print("*********************************************************")
 
-print()
-print("PARAMETERS")
-print("----------")
-for key, value in parameters.items():
-    print(key, '=', value)
-print()
+# ARGPARSER
+parser = argparse.ArgumentParser(description='Topological Image Segmentation')
+
+parser.add_argument('--export_config', type=str, default=None, help='Folder where to create the configuration file')
+parser.add_argument('--img', type=str, default=None, help='Input image')
+parser.add_argument('--rms', type=str, default=None, help='Input rms map')
+parser.add_argument('--output', type=str, default=None, help='Output folder')
+args = parser.parse_args()
+
+if args.export_config is not None:
+    src = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'default_tis.conf')
+    dst = os.path.join(args.export_config, 'tis.conf')
+    shutil.copyfile(src, dst)
+    sys.exit()
+
+
+# print()
+# print("PARAMETERS")
+# print("----------")
+# for key, value in parameters.items():
+#    print(key, '=', value)
+# print()
 
 DATA_FOLDER = parameters['DATA_FOLDER']
 IMG_FILE = parameters['IMG_FILE']
 RMS_FILE = parameters['RMS_FILE']
 
-OUT_FOLDER = parameters['OUT_FOLDER']
+if args.output is None:
+    OUT_FOLDER = parameters['OUT_FOLDER']
+else:
+    OUT_FOLDER = args.output
 OUT_FILE = parameters['OUT_FILE']
 OUT_INFO = parameters['OUT_INFO']
 
@@ -42,11 +64,19 @@ while True:
             out_folder = out_folder[:-1] + str(i)
         i += 1
 
-img_path = os.path.join(data_folder, IMG_FILE)
-rms_path = os.path.join(data_folder, RMS_FILE)
+if args.img is None:
+    img_path = os.path.join(data_folder, IMG_FILE)
+else:
+    img_path = args.img
+if args.rms is None:
+    rms_path = os.path.join(data_folder, RMS_FILE)
+else:
+    rms_path = args.rms
+
 
 seg_path = os.path.join(out_folder, OUT_FILE)
 inf_path = os.path.join(out_folder, OUT_INFO)
+
 
 print("START")
 print("-----")
@@ -82,5 +112,5 @@ print('Export info...', end='')
 write_info(info, inf_path)
 print('DONE!')
 
-print()
+print("-----")
 print("BYE BYE!")
