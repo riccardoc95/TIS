@@ -9,9 +9,34 @@
 ## SEGMENTATION PARAMETERS
 #  - T = parametro di threshold per la maschera RMS
 #  - D = parametro di dilatazione della maschera RMS
-#  - SIGMA = paramentro per il denoising Gaussiano (se =None viene stimato)
 #  - CONVEX = forza la segmentazione ad essere convessa
 #  - ELLIPSE = forza la segmentazione ad essere un ellisse
+#
+#  - FILTER_TYPE =
+#  - DENOISE_TYPE =
+#
+#
+#  # GAUSSIAN
+#  - SIGMA = paramentro per il denoising Gaussiano (se =None viene stimato)
+#  - X_SIZE =
+#  - Y_SIZE =
+#
+#  # ANISODIFF
+#  - N_ITER =
+#  - GAMMA =
+#  - KAPPA =
+#
+#  # TOTAL_VARIATION
+#  - WEIGHT =
+#  - MAX_ITER =
+#  - EPS =
+#  - ISOTROPIC =
+#
+#  # WAVELET
+#  - SIGMA_W =
+#  - WAVELET =
+#
+#
 
 [INPUT PARAMETERS]
 DATA_FOLDER = ./data/grid/
@@ -19,7 +44,7 @@ IMG_FILE = img.fits
 RMS_FILE = rms.fits
 
 [OUTPUT PARAMETERS]
-OUT_FOLDER = out
+OUT_FOLDER = ./out
 OUT_FILE = segm.fits
 OUT_INFO = segm.csv
 

@@ -8,7 +8,7 @@ parameters = {# Input Parameters
               "IMG_FILE": "img.fits",
               "RMS_FILE": "rms.fits",
               # Output Parameters
-              "OUT_FOLDER": "data",
+              "OUT_FOLDER": "./out",
               "OUT_FILE": "segm.fits",
               "OUT_INFO": "segm.csv",
               # DataManager Parameters
