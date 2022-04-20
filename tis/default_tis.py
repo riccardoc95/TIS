@@ -3,34 +3,46 @@
 ######################
 #
 ## DATAMANAGER PARAMETERS
-#  - DIM_PATCH = dimensione del ritaglio dell'immagine
-#  - DIM_OVERLAP = dimensione dell'overlap
+#  - DIM_PATCH = (INTEGER) dimensione del ritaglio dell'immagine
+#  - DIM_OVERLAP = (INTEGER) dimensione dell'overlap
 #
 ## SEGMENTATION PARAMETERS
-#  - T = parametro di threshold per la maschera RMS
-#  - D = parametro di dilatazione della maschera RMS
-#  - CONVEX = forza la segmentazione ad essere convessa
-#  - ELLIPSE = forza la segmentazione ad essere un ellisse
+#  - T = (FLOAT) parametro di threshold per la maschera RMS
+#  - D = (INTEGER) parametro di dilatazione della maschera RMS
+#  - CONVEX = (BOOLEAN) forza la segmentazione ad essere convessa
+#  - ELLIPSE = (BOOLEAN) forza la segmentazione ad essere un ellisse
 #
-#  - FILTER_TYPE =
-#  - DENOISE_TYPE =
+#  - FILTER_TYPE = (STRING) tipo di filtro per il diagramma di persistenza, da scegliere tra:
+#                  - persistent_entropy,
+#                  - gaussian_mixture,
+#                  - bayesian_gaussian_mixture,
+#                  - kmeans,
+#                  - mean_shift,
+#                  - spectral,
+#                  - agglomerative
+#
+#  - DENOISE_TYPE = (STRING) tipo di denoise da applicare all'immagine, da scegliere tra:
+#                   - gaussian,
+#                   - anisodiff,
+#                   - total_variation,
+#                   - wavelet
 #
 #
 #  # GAUSSIAN
-#  - SIGMA = paramentro per il denoising Gaussiano (se =None viene stimato)
-#  - X_SIZE =
-#  - Y_SIZE =
+#  - SIGMA = (FLOAT/NONE) paramentro per il denoising Gaussiano (se =None viene stimato)
+#  - X_SIZE = (INT)
+#  - Y_SIZE = (INT)
 #
 #  # ANISODIFF
-#  - N_ITER =
-#  - GAMMA =
-#  - KAPPA =
+#  - N_ITER = (INT)
+#  - GAMMA = (FLOAT)
+#  - KAPPA = (INT)
 #
 #  # TOTAL_VARIATION
-#  - WEIGHT =
-#  - MAX_ITER =
-#  - EPS =
-#  - ISOTROPIC =
+#  - WEIGHT = (FLOAT)
+#  - MAX_ITER = (INT)
+#  - EPS = (FLOAT)
+#  - ISOTROPIC = (BOOLEAN)
 #
 #  # WAVELET
 #  - SIGMA_W =
