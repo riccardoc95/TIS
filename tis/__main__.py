@@ -31,6 +31,12 @@ print("                        *  TIS  *                        ")
 print("***********************   *   *   ***********************")
 print("*********************************************************")
 
+# PARAMETERS
+print("SELECTED PARAMETERS")
+for key, value in parameters.items():
+    print(key, ' : ', value)
+print()
+
 DATA_FOLDER = parameters['DATA_FOLDER']
 IMG_FILE = parameters['IMG_FILE']
 RMS_FILE = parameters['RMS_FILE']
