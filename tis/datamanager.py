@@ -19,52 +19,56 @@ denoiser_fun = ALL_DENOISE[parameters["DENOISE_TYPE"]]
 
 
 async def image_process(patch):
-    if parameters["DENOISE_TYPE"] == "gaussian":
-        if parameters['SIGMA'] is None:
-            sigma = fs(patch.get_img(),
-                       patch.get_rms(),
-                       t=parameters['T'],
-                       d=parameters['D'],
-                       lifetime_filter=lifetime_filter)
-        else:
-            sigma = parameters['SIGMA']
-        denoiser = lambda x: denoiser_fun(img=x,
-                                          sigma=sigma,
-                                          x_size=parameters["X_SIZE"],
-                                          y_size=parameters["Y_SIZE"])
-    elif parameters["DENOISE_TYPE"] == "anisodiff":
-        denoiser = lambda x: denoiser_fun(img=x,
-                                          niter=parameters["N_ITER"],
-                                          gamma=parameters["GAMMA"],
-                                          kappa=parameters["KAPPA"])
-    elif parameters["DENOISE_TYPE"] == "total_variation":
-        denoiser = lambda x: denoiser_fun(img=x,
-                                          weight=parameters["WEIGHT"],
-                                          max_iter=parameters["MAX_ITER"],
-                                          eps=parameters["EPS"],
-                                          isotropic=parameters["ISOTROPIC"])
-    elif parameters["DENOISE_TYPE"] == "wavelet":
-        denoiser = lambda x: denoiser_fun(img=x,
-                                          sigma=parameters["SIGMA_W"],
-                                          wav=parameters["WAVELET"])
+    if np.isnan(patch.get_img()).all():
+        patch.update_seg(np.zeros_like(patch.get_img()))
+        patch.update_info(pd.DataFrame([]))
     else:
-        denoiser = lambda x: ALL_DENOISE['gaussian'](img=x, sigma=1.25)
+        if parameters["DENOISE_TYPE"] == "gaussian":
+            if parameters['SIGMA'] is None:
+                sigma = fs(patch.get_img(),
+                           patch.get_rms(),
+                           t=parameters['T'],
+                           d=parameters['D'],
+                           lifetime_filter=lifetime_filter)
+            else:
+                sigma = parameters['SIGMA']
+            denoiser = lambda x: denoiser_fun(img=x,
+                                              sigma=sigma,
+                                              x_size=parameters["X_SIZE"],
+                                              y_size=parameters["Y_SIZE"])
+        elif parameters["DENOISE_TYPE"] == "anisodiff":
+            denoiser = lambda x: denoiser_fun(img=x,
+                                              niter=parameters["N_ITER"],
+                                              gamma=parameters["GAMMA"],
+                                              kappa=parameters["KAPPA"])
+        elif parameters["DENOISE_TYPE"] == "total_variation":
+            denoiser = lambda x: denoiser_fun(img=x,
+                                              weight=parameters["WEIGHT"],
+                                              max_iter=parameters["MAX_ITER"],
+                                              eps=parameters["EPS"],
+                                              isotropic=parameters["ISOTROPIC"])
+        elif parameters["DENOISE_TYPE"] == "wavelet":
+            denoiser = lambda x: denoiser_fun(img=x,
+                                              sigma=parameters["SIGMA_W"],
+                                              wav=parameters["WAVELET"])
+        else:
+            denoiser = lambda x: ALL_DENOISE['gaussian'](img=x, sigma=1.25)
 
-    patch.update(pp(patch.get_img(),
-                    patch.get_rms(),
-                    t=parameters['T'],
-                    d=parameters['D'],
-                    denoiser=denoiser))
+        patch.update(pp(patch.get_img(),
+                        patch.get_rms(),
+                        t=parameters['T'],
+                        d=parameters['D'],
+                        denoiser=denoiser))
 
-    seg, info = sg(patch.get_data(),
-                   img=patch.get_img(),
-                   rms=patch.get_rms(),
-                   convex=parameters['CONVEX'],
-                   ellipse=parameters['ELLIPSE'],
-                   lifetime_filter=lifetime_filter,
-                   start_id=np.square(patch.x_end - patch.x_start) * patch.idx)
-    patch.update_seg(seg)
-    patch.update_info(pd.DataFrame(info))
+        seg, info = sg(patch.get_data(),
+                       img=patch.get_img(),
+                       rms=patch.get_rms(),
+                       convex=parameters['CONVEX'],
+                       ellipse=parameters['ELLIPSE'],
+                       lifetime_filter=lifetime_filter,
+                       start_id=np.square(patch.x_end - patch.x_start) * patch.idx)
+        patch.update_seg(seg)
+        patch.update_info(pd.DataFrame(info))
 
 
 class Patch:
@@ -195,8 +199,12 @@ class DataManager:
         n_elem = 1
         for patch in self.data:
             x_s, x_e, y_s, y_e = patch.get_coordinates()
-
             seg_patch = patch.get_seg()
+
+            if seg_patch.sum() == 0:
+                self.segment[x_s:x_e, y_s:y_e] = 0
+                continue
+
             res_patch = self.segment[x_s:x_e, y_s:y_e]
             info_patch = self._fix_info_position(patch)
             img = patch.get_img()

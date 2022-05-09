@@ -276,4 +276,3 @@ def get_parameters():
 
 
 parameters = get_parameters()
-print(parameters)

@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
    name='TIS',
-   version='0.1.0',
+   version='0.2.0',
    author='Riccardo Ceccaroni',
    author_email='riccardo.ceccaroni.95@gmail.com',
    packages=find_packages(),
