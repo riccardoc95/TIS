@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Ceccaroni"
+  given-names: "Riccardo"
+  orcid: ""
+- family-names: "Brutti"
+  given-names: "Pierpaolo"
+  orcid: ""
+- family-names: "Castellano"
+  given-names: "Marco"
+  orcid: ""
+- family-names: "Fontana"
+  given-names: "Adriano"
+  orcid: ""
+- family-names: "Merlin"
+  given-names: "Emiliano"
+  orcid: ""
+title: "TIS - Topological Image Segmentation"
+version: 0.1
+doi: 
+date-released: 2022-02-23
+url: "https://github.com/riccardoc95/TIS"
