@@ -4,7 +4,7 @@
 
 
 ![alt text](https://github.com/riccardoc95/TIS/blob/main/logo.png)
-© Copyright by
+© Copyright by Ceccaroni, R., Brutti, P., Castellano, M., Fontana, A., Merlin, E.
 
 ## Description
 TIS is a Python library for the segmentation of astronomical images. It uses persistent homology to find and separate objects.
