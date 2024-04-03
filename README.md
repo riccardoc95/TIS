@@ -52,10 +52,6 @@ python -m tis --export_config .
 ```
 to export the configuration file to the current directory. Then, edit the file `tis.conf` and run the script as in point 1 in the same directory as the configuration file.
 
-### Try on Colab 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1o19WjvMJKN8jfJKYnsl2dRb9iKf_JP-9?usp=sharing)
-
-
 ## Input file format
 The script takes only `.fits` files as input.
 
